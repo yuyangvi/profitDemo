@@ -1,0 +1,234 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>WoW！</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+<style>
+</style>
+</head>
+<body>
+  <canvas id="circleCanvas" width="950" height="950"></canvas>
+  <canvas id="canvasParticle"></canvas>
+    <svg class="electric-loader" viewBox="0 0 100 100">
+      <g></g>
+    </svg>
+</body>
+<script src="d3.v4.min.js"></script>
+<!--script src="simple-statistics.js"></script-->
+<script src="statistic.js"></script>
+<script>
+const W = document.body.clientWidth;
+const H = window.innerHeight;
+const PrimaryColor = '#1f97ed'
+const svg = d3.select("body").append("svg").attr('id', 'circleBlue')
+  .attr("width", W)
+  .attr("height", H)
+const sideSvg = d3.select("body").append("svg").attr('id', 'sideSvg')
+  .attr("width", W)
+  .attr("height", H)
+const centerDistribution = (price, i) => {
+  const w = W / 6
+  const h = W * 0.1
+  const data = d3.range(-3, 3, 0.1).map(n => [Math.pow(price, 1 + i * n), 1 - cdf(n)])
+  data.unshift([0, 1])
+  svg.append("g").attr("transform", `translate(${w * 2.5},${H/2-h/2})`).attr("id", "dist")
+  const x = d3.scaleLinear().domain([0, d3.max(data, n=>n[0])]).range([0, w])
+  const y = d3.scaleLinear().domain([0, 1]).rangeRound([h, 0])
+  const area = d3.area()
+      .x(d => x(d[0]))
+      .y0(h)
+      .y1(d => y(d[1]))
+    var line = area.lineY1()
+  const dist = svg.select('#dist')
+  dist.append("path")
+    .attr("d", area(data))
+    .attr("fill", PrimaryColor)
+    .attr('opacity', 0.1)
+  dist.append("path")
+    .attr("d", line(data))
+    .attr("stroke", PrimaryColor)
+    .attr("fill", 'none')
+    .attr("stroke-width", 2)
+  // 画底部axis
+  dist.append("g")
+    .attr("transform", "translate(0," + h + ")")
+    .call(d3.axisBottom(x)
+      .tickSize(0)
+      .tickPadding(6)
+    );
+  // 画顶部
+  const g = dist.append("g").attr("text-anchor", "middle").attr("transform", "translate(0, -40)")
+  g.append('text').attr("x", w*0.25).text("Pmax")
+  g.append('text').attr("x", w*0.25).attr("y", 30).attr("class", "h1").text("26.03");
+  g.append('text').attr("x", w*0.75).text("mu")
+  g.append('text').attr("x", w*0.75).attr("y", 30).attr("class", "h1").text("0.3");
+  //g.append('text').attr("class", "h1").text("mu: 0.3").attr("text-anchor", "middle");
+}
+const centerCircle = () => {
+  const r = 300
+  svg.append("g").attr("id", "circle").attr("transform", `translate(${W * 0.5},${H * 0.5})`);
+  const node = svg.select('#circle')
+  node.append("circle").attr("cx", 0).attr("cy", 0).attr("stroke", PrimaryColor).attr("r", r).attr("stroke-width", 2).attr("fill", 'transparent')
+  /*
+  const arc = d3.arc()
+    .innerRadius(n => (r + 5 * n + 5))
+    .outerRadius(n => (r + 5 * n + 6))
+    .startAngle(n => {
+      return Math.PI / 20 * n
+    })
+    .endAngle(n => Math.PI / 10 * (n+1))
+  node.selectAll('path').data(d3.range(0, 3)).enter().append("path").attr("d", arc).attr('fill', '#ccc')
+  */
+}
+//沉没利润
+const allowanceProfit = (m , n) => {
+  var width = W*0.25;
+  var height = H * 0.25;
+  var xz = d3.range(m),
+    yz = d3.range(n).map(() => bumps(m)),
+    y01z = d3.stack().keys(d3.range(n))(d3.transpose(yz)),
+    yMax = d3.max(yz, n => d3.max(n)),
+    y1Max = d3.max(y01z, y => d3.max(y, d => d[1]));
+  var x = d3.scaleBand()
+    .domain(xz)
+    .rangeRound([0, width])
+    .padding(0.08);
+
+  var y = d3.scaleLinear()
+    .domain([0, y1Max])
+    .range([height, 0]);
+
+  var color = d3.scaleOrdinal()
+    .domain(d3.range(n))
+    .range(d3.schemeCategory20c);
+  y.domain([0, y1Max]);
+  const panel = sideSvg.append("g").attr("class", "allowanceProfit");
+  panel.append("g")
+    .attr("text-anchor", "start")
+    .append('text')
+    .attr("y", 20)
+    .attr("x", 0)
+    .text("Allowance Profit");
+  var series = panel.append("g").attr("class", "allowanceProfitChart").selectAll(".series")
+    .data(y01z)
+    .enter().append("g")
+    .attr("fill", function(d, i) { return color(i); });
+
+  var rect = series.selectAll("rect")
+    .data(function(d) { return d; })
+    .enter().append("rect")
+    .attr("x", function(d, i) { return x(i); })
+    .attr("y", height)
+    .attr("width", x.bandwidth())
+    .attr("height", 0);
+
+  rect.transition()
+    .duration(500)
+    .delay(function(d, i) { return i * 10; })
+    .attr("y", function(d) { return y(d[1]); })
+    .attr("height", function(d) { return y(d[0]) - y(d[1]); })
+}
+
+const distribE = (m) => {
+  // var xz = d3.range(m),
+  // yz = d3.range(n).map(() => bumps(m)),
+  yMax = 10;// d3.max(yz, n => d3.max(n));
+  const r = W / 5
+  const c = [1.1, 0.72, 2.05, 1.35, 2.4]
+
+  const arc = d3.arc()
+    .innerRadius((n,i) => (r + 10 * i + 5))
+    .outerRadius((n,i) => (r + 10 * i + 7))
+    .startAngle(0)
+    .endAngle(n => Math.PI / 2 * n)
+  const node = svg.select('#circle');
+
+  const nodePath = node.selectAll('path').data(c).enter().append("path").attr('fill', PrimaryColor)
+
+  const tweenArc = (b) => {
+    return function(a, i) {
+      var d = b.call(this, a, i);
+      const m = d3.interpolate(0, d);
+      //console.log(arc)
+      // for (var k in d) a[k] = d[k]; // update data
+      return function(t) { return arc(m(t), i); };
+    };
+  }
+  nodePath.transition()
+    .duration(500)
+    .delay(function(d, i) { return i * 150; })
+    .attrTween("d", tweenArc((d, i) => {
+      return d;
+    }))
+
+    //.attrTween("d", arc([0,0,0,0,0]))
+}
+const pubOpMonitor = (m) => {
+  var w = W * 0.25;
+  var h = H * 0.25;
+  var data = [1.3, 2.3, -1.5, -1.7, 1.5, 2.3, 1.9];
+    yMax = d3.max(data);
+  sideSvg.append("g").attr("transform", `translate(50,${H/2-h/2})`).attr("id", "pubop")
+  const x = d3.scaleLinear().domain([0, data.length]).range([0, w])
+  const y = d3.scaleLinear().domain([0, 5]).rangeRound([h, 0])
+  const area = d3.area()
+      .x((d,i) => { console.log(i, x(i));return x(i); })
+      .y0(h)
+      .y1(d => y(d))
+  const line = area.lineY1()
+  const dist = sideSvg.select('#pubop')
+  dist.append("path")
+    .attr("d", area(data))
+    .attr("fill", PrimaryColor)
+    .attr('opacity', 0.1)
+  dist.append("path")
+    .attr("d", line(data))
+    .attr("stroke", PrimaryColor)
+    .attr("fill", 'none')
+    .attr("stroke-width", 2)
+}
+
+const price = 20.6, i = 0.05;
+
+centerDistribution(price, i);//中间的分布图
+centerCircle();//中间的圆圈
+allowanceProfit(20, 2)//补贴发放和使用趋势
+pubOpMonitor(20,2);//舆情监控的趋势
+distribE(5);//中间描述补贴的分布环线
+
+pubOpMonitor(20);
+</script>
+  <script src="circleBorder.js"></script>
+  <script src="svgCircle.js"></script>
+  <script src="particleBackground.js"></script>
+  <script>
+    window.addEventListener('mousemove', (pos)=>{
+      const canvas1 = document.getElementById("circleCanvas");
+      const canvas2 = document.getElementById("circleBlue");
+      const canvas3 = document.getElementsByClassName("electric-loader")[0];
+      const canvas4 = document.getElementById('canvasParticle');
+      const node = canvas1;
+      const originWidth = node.parentNode.scrollWidth;
+      const originHeight = node.parentNode.scrollHeight;
+      const elementCenterX = node.offsetLeft + node.offsetWidth / 2;
+      const elementCenterY = node.offsetTop + node.offsetHeight / 2;
+      const originX = pos.pageX;
+      const originY = pos.pageY;
+
+      const focalPointX = (elementCenterX - originX) * (elementCenterX / originWidth / elementCenterX);
+      const focalPointY = (elementCenterY - originY) * (elementCenterY / originHeight / elementCenterY);
+
+      const rotateX = focalPointY * 40;
+      const rotateY = focalPointX * 40;
+
+      canvas1.style.transform = 'rotateY(' + -rotateY + 'deg) rotateX(' + rotateX + 'deg)';
+      canvas2.style.transform = 'rotateY(' + -rotateY + 'deg) rotateX(' + rotateX + 'deg)';
+      canvas3.style.transform = 'rotateY(' + -rotateY + 'deg) rotateX(' + rotateX + 'deg)';
+
+      canvas4.style.transform = 'translate(' + rotateY*3 + 'px, ' + rotateX*3 + 'px)';
+    }, false);
+  </script>
+</html>

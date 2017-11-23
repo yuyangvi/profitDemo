@@ -1,0 +1,75 @@
+@font-face{
+  font-family:WD_tech_Plain;
+  font-weight:400;
+  src:url(WD_tech_Plain.eot);
+  src:url(WD_tech_Plain.eot?#iefix) format("embedded-opentype"),
+    url(WD_tech_Plain.woff) format("woff"),
+    url(WD_tech_Plain.ttf) format("truetype"),
+    url(WD_tech_Plain.svg#WD_tech_Plain) format("svg");
+  font-style:normal
+}
+body{
+  font-family: 'Source Code Pro'
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+}
+.h1{font-size: 20px;stroke:#1f97ed;}
+.allowanceProfit text{font-size: 20px;font-size: WD_tech_Plain;}
+.allowanceProfit{transform: translate(50px,50px);}
+.allowanceProfitChart{transform: translate(0,50px);}
+.pubOpMonitor {
+  transform: translate(50px, 450px);
+}
+#sideSvg{position: absolute;left: 0;top:0;}
+
+#circleCanvas{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+}
+
+#canvasParticle{
+    display:block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    z-index: -1;
+}
+
+
+.electric-loader {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  margin: auto;
+  width: 80%;
+  width: 80vw;
+  height: auto;
+  max-width: 600px;
+}
+
+.electric-loader path { 
+  fill: none;
+  stroke: #1f97ed; 
+  stroke-width: 0.2; 
+  
+  transform-origin: 50% 50%;
+  animation: 
+    stroke-anim 2s steps(40) infinite, 
+    stroke-color 0.6s steps(10)  alternate infinite,
+    /* spin 84s linear infinite; */
+}
+
+@keyframes stroke-anim { to { stroke-dashoffset: 0; } }
+@keyframes stroke-color { to { stroke: #49BEB7; } }
+@keyframes spin {
+    0%   {-webkit-transform: rotate(0deg)}
+    100% {-webkit-transform: rotate(360deg)}
+}
