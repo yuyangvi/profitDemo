@@ -5,68 +5,58 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>WoW！</title>
 <link rel="stylesheet" type="text/css" href="style.css">
-
 <style>
 </style>
 </head>
 <body>
+
   <canvas id="circleCanvas" width="950" height="950"></canvas>
   <canvas id="canvasParticle"></canvas>
     <svg class="electric-loader" viewBox="0 0 100 100">
       <g></g>
     </svg>
+    <svg id="circleBlue"></svg>
+    <svg id="sideSvg">
+    </svg>
+
+    <div class="params">
+      <p>
+        <label for="σ">σ</label><input type="range" name="points" min="0" max="1" />
+      </p>
+      <p>
+        <label for="cost">cost</label><input type="range" name="points" min="0" max="100" />
+      </p>
+    </div>
+    <div class="heatmap">
+      <a href="#map1" class="flink"></a>
+      <a href="#map1" class="rlink"></a>
+      <a href="#map1" class="plink"></a>
+
+    </div>
 </body>
 <script src="d3.v4.min.js"></script>
 <!--script src="simple-statistics.js"></script-->
-<script src="statistic.js"></script>
 <script>
 const W = document.body.clientWidth;
 const H = window.innerHeight;
 const PrimaryColor = '#1f97ed'
-const svg = d3.select("body").append("svg").attr('id', 'circleBlue')
+const svg = d3.select('#circleBlue')
   .attr("width", W)
   .attr("height", H)
-const sideSvg = d3.select("body").append("svg").attr('id', 'sideSvg')
+const sideSvg = d3.select('#sideSvg')
   .attr("width", W)
   .attr("height", H)
-const centerDistribution = (price, i) => {
-  const w = W / 6
-  const h = W * 0.1
-  const data = d3.range(-3, 3, 0.1).map(n => [Math.pow(price, 1 + i * n), 1 - cdf(n)])
-  data.unshift([0, 1])
-  svg.append("g").attr("transform", `translate(${w * 2.5},${H/2-h/2})`).attr("id", "dist")
-  const x = d3.scaleLinear().domain([0, d3.max(data, n=>n[0])]).range([0, w])
-  const y = d3.scaleLinear().domain([0, 1]).rangeRound([h, 0])
-  const area = d3.area()
-      .x(d => x(d[0]))
-      .y0(h)
-      .y1(d => y(d[1]))
-    var line = area.lineY1()
-  const dist = svg.select('#dist')
-  dist.append("path")
-    .attr("d", area(data))
-    .attr("fill", PrimaryColor)
-    .attr('opacity', 0.1)
-  dist.append("path")
-    .attr("d", line(data))
-    .attr("stroke", PrimaryColor)
-    .attr("fill", 'none')
-    .attr("stroke-width", 2)
-  // 画底部axis
-  dist.append("g")
-    .attr("transform", "translate(0," + h + ")")
-    .call(d3.axisBottom(x)
-      .tickSize(0)
-      .tickPadding(6)
-    );
-  // 画顶部
-  const g = dist.append("g").attr("text-anchor", "middle").attr("transform", "translate(0, -40)")
-  g.append('text').attr("x", w*0.25).text("Pmax")
-  g.append('text').attr("x", w*0.25).attr("y", 30).attr("class", "h1").text("26.03");
-  g.append('text').attr("x", w*0.75).text("mu")
-  g.append('text').attr("x", w*0.75).attr("y", 30).attr("class", "h1").text("0.3");
-  //g.append('text').attr("class", "h1").text("mu: 0.3").attr("text-anchor", "middle");
-}
+const lineA = d3.line().x(d=>d[0]).y(d=>d[1]);
+const pointerData = [
+  [[W*0.25,H*0.13],[W*0.33, H*0.13],[W*0.48,H*0.46]],
+  [[W*0.25,H*0.78],[W*0.33, H*0.78],[W*0.49,H*0.59]],
+  [[W*0.75,H*0.78],[W*0.62, H*0.79],[W*0.55,H*0.59]]
+];
+sideSvg.selectAll('.pointer').data(pointerData).enter().append('path').attr('class', 'pointer').attr('d', lineA)
+</script>
+<script src="statistic.js"></script>
+<script src="centerDistribution.js"></script>
+<script>
 const centerCircle = () => {
   const r = 300
   svg.append("g").attr("id", "circle").attr("transform", `translate(${W * 0.5},${H * 0.5})`);
@@ -136,7 +126,7 @@ const distribE = (m) => {
   // var xz = d3.range(m),
   // yz = d3.range(n).map(() => bumps(m)),
   yMax = 10;// d3.max(yz, n => d3.max(n));
-  const r = W / 5
+  const r = 300;
   const c = [1.1, 0.72, 2.05, 1.35, 2.4]
 
   const arc = d3.arc()
@@ -163,7 +153,7 @@ const distribE = (m) => {
     .attrTween("d", tweenArc((d, i) => {
       return d;
     }))
-
+  console.log('4');
     //.attrTween("d", arc([0,0,0,0,0]))
 }
 const pubOpMonitor = (m) => {
@@ -175,7 +165,7 @@ const pubOpMonitor = (m) => {
   const x = d3.scaleLinear().domain([0, data.length]).range([0, w])
   const y = d3.scaleLinear().domain([0, 5]).rangeRound([h, 0])
   const area = d3.area()
-      .x((d,i) => { console.log(i, x(i));return x(i); })
+      .x((d,i) => x(i))
       .y0(h)
       .y1(d => y(d))
   const line = area.lineY1()
@@ -195,13 +185,11 @@ const price = 20.6, i = 0.05;
 
 centerDistribution(price, i);//中间的分布图
 centerCircle();//中间的圆圈
-allowanceProfit(20, 2)//补贴发放和使用趋势
-pubOpMonitor(20,2);//舆情监控的趋势
-distribE(5);//中间描述补贴的分布环线
-
-pubOpMonitor(20);
+//allowanceProfit(20, 2)//补贴发放和使用趋势
+//pubOpMonitor(20,2);//舆情监控的趋势
+distribS(5);//中间描述补贴的分布环线
 </script>
-  <script src="circleBorder.js"></script>
+  <!--script src="circleBorder.js"></script>
   <script src="svgCircle.js"></script>
   <script src="particleBackground.js"></script>
   <script>
@@ -230,5 +218,5 @@ pubOpMonitor(20);
 
       canvas4.style.transform = 'translate(' + rotateY*3 + 'px, ' + rotateX*3 + 'px)';
     }, false);
-  </script>
+  </script-->
 </html>

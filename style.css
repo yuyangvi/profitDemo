@@ -14,8 +14,22 @@ body{
   padding: 0;
   overflow: hidden;
 }
-}
 .h1{font-size: 20px;stroke:#1f97ed;}
+.params{
+  position:absolute;
+  top:5px;
+  right: 5px;
+  width: 220px;
+  padding-left: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  z-index: 5;
+}
+.params label{
+  display: inline-block;
+  width: 50px;
+}
+#circle path:hover{transform: scale(1, 1.1);}
 .allowanceProfit text{font-size: 20px;font-size: WD_tech_Plain;}
 .allowanceProfit{transform: translate(50px,50px);}
 .allowanceProfitChart{transform: translate(0,50px);}
@@ -54,6 +68,11 @@ body{
   height: auto;
   max-width: 600px;
 }
+.pointer{
+  stroke: #1f97ed; 
+  stroke-width: 2;
+  fill: none;
+}
 
 .electric-loader path { 
   fill: none;
@@ -66,6 +85,18 @@ body{
     stroke-color 0.6s steps(10)  alternate infinite,
     /* spin 84s linear infinite; */
 }
+.heatmap a{
+  display: block;
+  width: 10px;
+  height: 10px;
+  background: #1f97ed;
+  position: absolute;
+  z-index: 6;
+  border-radius: 5px;
+}
+.flink{ left: 48%; top: 46%;}
+.rlink{ left: 48%; top: 57%;}
+.plink{ left: 53%; top: 57%;}
 
 @keyframes stroke-anim { to { stroke-dashoffset: 0; } }
 @keyframes stroke-color { to { stroke: #49BEB7; } }
@@ -73,3 +104,11 @@ body{
     0%   {-webkit-transform: rotate(0deg)}
     100% {-webkit-transform: rotate(360deg)}
 }
+@keyframes breath {
+    0%   {-webkit-transform: scale(1)}
+    50% {-webkit-transform: scale(1.1)}
+    100% {-webkit-transform: scale(1)}
+}
+
+
+
