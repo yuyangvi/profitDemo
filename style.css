@@ -9,11 +9,40 @@
   font-style:normal
 }
 body{
-  font-family: 'Source Code Pro'
+  font-family: 'Source Code Pro';
   margin: 0;
   padding: 0;
   overflow: hidden;
 }
+
+#loading{
+  position:absolute;
+  left:0;
+  top:0;
+}
+
+#future{
+  position: absolute;
+  bottom: 150px;
+  transform: translate(-50%, 0);
+  width: 171px;
+  height: 40px;
+  background-color: #1f97ed;
+  color: white;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  left: 50%;
+  border-radius: 4px;
+  z-index: 99;
+  opacity: 0;
+  transition: opacity 1s;
+}
+#future:hover {
+  transition: box-shadow 0.5s;
+  box-shadow: 0 0 3em rgb(0, 204, 255)
+}
+
 .h1{font-size: 20px;stroke:#1f97ed;}
 .params{
   position:absolute;

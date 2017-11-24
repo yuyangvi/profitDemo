@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+	<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="loading.js"></script>
+	</head>
+	<body>
+		<canvas id="loading"></canvas>
+		<button id="future">Go to the Future</button>
+		<script>
+			startLoadiing();
+			document.getElementById("future").addEventListener('click', function(){
+				let url = window.location.href;
+				window.location.href = url.slice(0, url.length - 12) + "svg.html";
+			}, false);
+		</script>
+	</body>
+</html>
+

@@ -1,9 +1,4 @@
-(function() {
-    var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
-                                window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-    window.requestAnimationFrame = requestAnimationFrame;
-  })(); 
-  
+function startCircleBorder() {
   var canvas = document.getElementById('circleCanvas');
   var ctx = canvas.getContext( '2d' );
   var x = canvas.width/2;
@@ -104,6 +99,5 @@
     /* Recalls the animation each time it loops through */
     window.requestAnimationFrame(doRotate);  
   }
-  
   doRotate();
-  
+}
