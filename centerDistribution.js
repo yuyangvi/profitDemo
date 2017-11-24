@@ -94,14 +94,16 @@ const getResult = (price, sig, cost) => mu => {
 }
 
 const deliverResult = (price, sig, cost) => {
-  var a = -0.98, b = 0.98;
+  var a = -1, b = 1;
   const func = getResult(price, sig, cost);
-  while( b - a < 0.001) {
-    if (func(a) > func(b)) {
-      b = (a + b) / 2;
-    } else {
-      a = (a + b) / 2;
-    }
+  while( b - a > 0.001) {
+    let c = [func(a), func(a*0.75+b*0.25),func(a*0.5+b*0.5),func(a*0.25+b*0.75), func(b)];
+    let d = Math.max.apply(null, c);
+    let i = c.indexOf(d);
+    let ia = Math.max(0, i - 1);
+    a = a * (4 - ia) * 0.25 + b * ia * 0.25;
+    let ib = Math.min(4, i + 1);
+    b = a * (4 - ib) * 0.25 + b * ib * 0.25;
   }
   return [Math.pow(price, 1 + sig * a), 1-cdf(a)];
 }
