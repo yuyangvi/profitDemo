@@ -32,9 +32,9 @@
       </p>
     </div>
     <div class="heatmap">
-      <a href="#map1" class="flink"></a>
+      <a href="#map0" class="flink"></a>
       <a href="#map1" class="rlink"></a>
-      <a href="#map1" class="plink"></a>
+      <a href="#map2" class="plink"></a>
 
     </div>
 </body>
@@ -52,11 +52,31 @@ const sideSvg = d3.select('#sideSvg')
   .attr("height", H)
 const lineA = d3.line().x(d=>d[0]).y(d=>d[1]);
 const pointerData = [
-  [[W*0.25,H*0.13],[W*0.33, H*0.13],[W*0.48,H*0.46]],
-  [[W*0.25,H*0.78],[W*0.33, H*0.78],[W*0.49,H*0.59]],
-  [[W*0.75,H*0.78],[W*0.62, H*0.79],[W*0.55,H*0.59]]
+  [[W*0.48,H*0.46],[W*0.33, H*0.13],[W*0.25,H*0.13]],
+  [[W*0.49,H*0.59],[W*0.33, H*0.78],[W*0.25,H*0.78]],
+  [[W*0.55,H*0.59],[W*0.62, H*0.78],[W*0.75,H*0.78]]
 ];
-sideSvg.selectAll('.pointer').data(pointerData).enter().append('path').attr('class', 'pointer').attr('d', lineA)
+const getLineLength = (cx, cy) => Math.sqrt(cx*cx + cy*cy);
+const lineLengthDict = [
+  W * 0.08 + getLineLength(W * 0.15, H * 0.33),
+  W * 0.08 + getLineLength(W * 0.16, H * 0.19),
+  W * 0.13 + getLineLength(W * 0.07, H * 0.19)
+]
+sideSvg.selectAll('.pointer').data(pointerData).enter().append('path')
+  .style('stroke-dasharray', (d, i) => lineLengthDict[i])
+  .style('stroke-dashoffset', (d, i) => lineLengthDict[i])
+  .attr('class', (d,i) => `pointer pointer-${i}`).attr('d', lineA)
+
+d3.selectAll('.heatmap a').on('mouseover', function(e){
+  const a = this.href.slice(-1);
+  sideSvg.select('.pointer-'+a).style("stroke-dashoffset", 0);
+  if (a == 0) {
+    allowanceProfit(20, 2);
+    distribE();
+  } else {
+    d3.select("")
+  }
+});
 </script>
 <script src="statistic.js"></script>
 <script src="centerDistribution.js"></script>
@@ -157,7 +177,6 @@ const distribE = (m) => {
     .attrTween("d", tweenArc((d, i) => {
       return d;
     }))
-  console.log('4');
     //.attrTween("d", arc([0,0,0,0,0]))
 }
 const pubOpMonitor = (m) => {
@@ -243,7 +262,6 @@ const valueAddedProfit = (m , n) => {
     .data(y01z)
     .enter().append("g")
     .attr("fill", function(d, i) { return color(i); });
-    console.log(series);
   var rect2 = series.selectAll("rect")
     .data(function(d) { return d; })
     .enter().append("rect")
@@ -255,12 +273,13 @@ const valueAddedProfit = (m , n) => {
 
 
 const price = 20.6, i = 0.05;
-
 centerDistribution(price, i);//中间的分布图
 centerCircle();//中间的圆圈
+/*
 allowanceProfit(20, 2)//补贴发放和使用趋势
 pubOpMonitor(20,2);//舆情监控的趋势
 valueAddedProfit(5,1)//
+*/
 // distribE(5);//中间描述补贴的分布环线
 startCircleBorder();
 startSvgCircle();
