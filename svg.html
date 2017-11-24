@@ -8,7 +8,7 @@
 <script src="circleBorder.js"></script>
 <script src="svgCircle.js"></script>
 <script src="particleBackground.js"></script>
-<script src="mousemove.js"></script>
+<!-- <script src="mousemove.js"></script> -->
 <style>
 </style>
 </head>
@@ -27,14 +27,14 @@
       <p>
         <label for="σ">σ</label><input type="range" name="sigma" min="0" max="50" id="sigma-input" />
       </p>
-      <p>
+      <!-- <p>
         <label for="cost">cost</label><input type="range" name="points" min="0" max="100" />
-      </p>
+      </p> -->
     </div>
     <div class="heatmap">
-      <a href="#map0" class="flink"></a>
-      <a href="#map1" class="rlink"></a>
-      <a href="#map2" class="plink"></a>
+      <a href="#map0" class="flink jumpout"></a>
+      <a href="#map1" class="rlink jumpout"></a>
+      <a href="#map2" class="plink jumpout"></a>
 
     </div>
 </body>
@@ -102,7 +102,6 @@ d3.selectAll('.heatmap a').on('mouseover', function(e){
   if (a == 2 && CurrentLine != a) {//右下角呈现
     valueAddedProfit(5,1);
     // distribE();
-    valueAddedProfit(5,1)//*/
     CurrentLine = a;
   } else if (a != 2){//右下角消失
     d3.select(".valueAddedProfit").style("opacity", 1)
@@ -316,14 +315,56 @@ valueAddedProfit(5,1)//*/
 startCircleBorder();
 startSvgCircle();
 startParticleBackGround();
-setTimeout(() => {
-  startmousemove();
-}, 5000);
-document.getElementById('sigma-input').addEventListener('change', (e) => {
+mv = (pos)=>{
+      const canvas1 = document.getElementById("circleCanvas");
+      const canvas2 = document.getElementById("circleBlue");
+      const canvas3 = document.getElementsByClassName("electric-loader")[0];
+      const canvas4 = document.getElementById('canvasParticle');
+      const node = canvas1;
+      const originWidth = node.parentNode.scrollWidth;
+      const originHeight = node.parentNode.scrollHeight;
+      const elementCenterX = node.offsetLeft + node.offsetWidth / 2;
+      const elementCenterY = node.offsetTop + node.offsetHeight / 2;
+      const originX = pos.pageX;
+      const originY = pos.pageY;
+
+      const focalPointX = (elementCenterX - originX) * (elementCenterX / originWidth / elementCenterX);
+      const focalPointY = (elementCenterY - originY) * (elementCenterY / originHeight / elementCenterY);
+
+      const rotateX = focalPointY * 40;
+      const rotateY = focalPointX * 40;
+
+      canvas1.style.transform = 'rotateY(' + -rotateY + 'deg) rotateX(' + rotateX + 'deg)';
+      canvas2.style.transform = 'rotateY(' + -rotateY + 'deg) rotateX(' + rotateX + 'deg)';
+      canvas3.style.transform = 'rotateY(' + -rotateY + 'deg) rotateX(' + rotateX + 'deg)';
+
+      canvas4.style.transform = 'translate(' + rotateY*3 + 'px, ' + rotateX*3 + 'px)';
+}
+document.getElementById('sigma-input').addEventListener('input', (e) => {
   const sig = e.target.value/100;
   d3.select('#dist').remove();
   centerDistribution(price, sig, 40.2);//中间的分布图
 });
+document.getElementsByClassName("params")[0].addEventListener('mousemove', (e) => {
+  const canvas1 = document.getElementById("circleCanvas");
+  const canvas2 = document.getElementById("circleBlue");
+  const canvas3 = document.getElementsByClassName("electric-loader")[0];
+  canvas1.style.transform = 'rotateY(' + -0 + 'deg) rotateX(' + 0 + 'deg)';
+  canvas2.style.transform = 'rotateY(' + -0 + 'deg) rotateX(' + 0 + 'deg)';
+  canvas3.style.transform = 'rotateY(' + -0 + 'deg) rotateX(' + 0 + 'deg)';
+  window.removeEventListener("mousemove", mv);
+});
+document.getElementsByClassName("params")[0].addEventListener('mouseleave', (e) => {
+  window.addEventListener('mousemove', mv, false);
+});
+setTimeout(() => {
+  window.addEventListener('mousemove', mv, false);
+  const list = document.querySelectorAll(".heatmap a");
+  list.forEach(i => {
+    i.classList.remove("jumpout");
+    i.classList.add("canbreath");
+  });
+}, 5000);
 </script>
 
 </html>
