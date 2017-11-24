@@ -66,15 +66,17 @@ sideSvg.selectAll('.pointer').data(pointerData).enter().append('path')
   .style('stroke-dasharray', (d, i) => lineLengthDict[i])
   .style('stroke-dashoffset', (d, i) => lineLengthDict[i])
   .attr('class', (d,i) => `pointer pointer-${i}`).attr('d', lineA)
-
+let CurrentLine = -1;
 d3.selectAll('.heatmap a').on('mouseover', function(e){
   const a = this.href.slice(-1);
   sideSvg.select('.pointer-'+a).style("stroke-dashoffset", 0);
-  if (a == 0) {
+  if (a == 0 && CurrentLine != a) {//左上角呈现
     allowanceProfit(20, 2);
     distribE();
-  } else {
-    d3.select("")
+    CurrentLine = a;
+  } else if (a !=0 && CurrentLine == 0){//左上角消失
+    d3.select(".allowanceProfit").remove();
+    sideSvg.select('.pointer-'+0).style("stroke-dashoffset", lineLengthDict[0]);
   }
 });
 </script>
@@ -274,10 +276,10 @@ const valueAddedProfit = (m , n) => {
 const price = 20.6, i = 0.05;
 centerDistribution(price, i);//中间的分布图
 centerCircle();//中间的圆圈
-
+/*
 allowanceProfit(20, 2)//补贴发放和使用趋势
 pubOpMonitor(20,2);//舆情监控的趋势
-valueAddedProfit(5,1)//
+valueAddedProfit(5,1)//*/
 //distribE(5);//中间描述补贴的分布环线
 startCircleBorder();
 startSvgCircle();
