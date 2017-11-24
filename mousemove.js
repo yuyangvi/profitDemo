@@ -1,3 +1,4 @@
+function startmousemove(){
 window.addEventListener('mousemove', (pos)=>{
       const canvas1 = document.getElementById("circleCanvas");
       const canvas2 = document.getElementById("circleBlue");
@@ -23,3 +24,4 @@ window.addEventListener('mousemove', (pos)=>{
 
       canvas4.style.transform = 'translate(' + rotateY*3 + 'px, ' + rotateX*3 + 'px)';
     }, false);
+  }

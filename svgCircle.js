@@ -6,19 +6,22 @@ function startSvgCircle() { 
     });
   }
   
+  d3.select('.electric-loader').attr("width", W).attr("height", H)
+
   var svgns = "http://www.w3.org/2000/svg";
   var twoPI = Math.PI * 2;
   
   function ElectricLine(radius, startOffset = 0, transparent){
   
+    var tempSVG = document.createElementNS(svgns, 'svg');
     var path = document.createElementNS(svgns, 'path');
     path.id = "s" + guid();
   
     var coords = [];
-    var centerX = 47;
-    var centerY = 47;
+    var centerX = W/2-8;
+    var centerY = H/2-10;
   
-    for (var i = 0; i <= twoPI + 0.02; i += 0.02 ){
+    for (var i = 0; i <= twoPI + 0.03; i += 0.03 ){
       coords.push( 
         centerX + ( Math.sin( i + startOffset ) * radius ), 
         centerY + ( Math.cos( i + startOffset ) * radius )
@@ -36,14 +39,13 @@ function startSvgCircle() { 
             i % 2 == 0 ? 'L' : 
             ',' 
           )
-           + Math.round( ( point + Math.random() * 6 ) * 100 ) / 100 
+           + Math.round( ( point + Math.random() * 17 ) * 100 ) / 100 
       }).join(''));
     }
   
     updateElectricLine();
   
     // Have to get it in the dom for `getTotalLength` to work
-    var tempSVG = document.createElementNS(svgns, 'svg');
     tempSVG.appendChild(path);
     document.body.appendChild(tempSVG);
   
@@ -63,9 +65,9 @@ function startSvgCircle() { 
   
   
   var lines = [
-    new ElectricLine( 45 , Math.PI * 0 ),
-    new ElectricLine( 45.5 , Math.PI * 0 , 0.5),
-    new ElectricLine( 46 , Math.PI * 0 , 0.3)
+    new ElectricLine( H/3 - 55 , Math.PI * 0 ),
+    new ElectricLine( H/3 - 54.5 , Math.PI * 0 , 0.5),
+    new ElectricLine( H/3 - 54 , Math.PI * 0 , 0.3)
   ];
   
   var svgCircle = document.querySelector('.electric-loader g');

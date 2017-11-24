@@ -1,10 +1,10 @@
 function startCircleBorder() {
   var canvas = document.getElementById('circleCanvas');
   var ctx = canvas.getContext( '2d' );
-  var x = canvas.width/2;
-  var y = canvas.height/2;
-  var radius = canvas.width/4;
-  var radiusTwo = canvas.width/5;
+  canvas.width = W;
+  canvas.height = H;
+  var x = canvas.width/2; // canvas.width
+  var y = canvas.height/2; // canvas.height
   var angle = 0;
   var negAngle = 0;
   var curPerc = 0;
@@ -66,7 +66,7 @@ function startCircleBorder() {
     counterClockwise = false;
     startAngle = 1.26 * Math.PI + negAngle;
     endAngle = 1.75 * Math.PI + negAngle;
-    var radiusThree = canvas.width/3;
+    var radiusThree = canvas.height/3 - 30;
     
     for(var i = 0; i < circleCount; i++) {
       ctx.strokeStyle = '#e0e0e0';
@@ -84,7 +84,7 @@ function startCircleBorder() {
     counterClockwise = false;
     startAngle = 1 * Math.PI + angle;
     endAngle = 1.002 * Math.PI + angle;
-    var radiusFour = canvas.width/2.7;
+    var radiusFour = canvas.height/3;
     
     for(var c = 0; c < circleCountSmall; c++) {
       ctx.strokeStyle = '#e0e0e0';
