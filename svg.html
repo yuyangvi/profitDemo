@@ -73,27 +73,40 @@ d3.selectAll('.heatmap a').on('mouseover', function(e){
   console.log(a, CurrentLine);
   if (a == 0 && CurrentLine != a) {//左上角呈现
     allowanceProfit(20, 2);
-    distribE();
+    setTimeout(() => {
+      distribE();
+    }, 700);
     CurrentLine = a;
   } else if (a !=0){//左上角消失
-    d3.select(".allowanceProfit").remove();
+    // d3.select(".allowanceProfitChart").selectAll("rect").transition()
+    // .duration(500)
+    // .attr("height", 0);
+    d3.select(".allowanceProfit").style("opacity", 1)
+    .transition().duration(400).style("opacity", 0).remove();
+    d3.select('#circle').selectAll('path').style("opacity", 1).transition()
+    .duration(400).style("opacity", 0).remove();
     sideSvg.select('.pointer-0').style("stroke-dashoffset", lineLengthDict[0]);
   }
   if (a == 1 && CurrentLine != a) {//左下角呈现
-    // allowanceProfit(20, 2);
-    // distribE();
+    pubOpMonitor(20,2);
+    setTimeout(() => {
+      distribS()
+    }, 700);
     CurrentLine = a;
   } else if (a != 1){//左下角消失
-    // d3.select(".allowanceProfit").remove();
+    d3.select("#pubop").style("opacity", 1)
+    .transition().duration(400).style("opacity", 0).remove();
+    d3.select('#circle').selectAll('path').style("opacity", 1).transition()
+    .duration(400).style("opacity", 0).remove();
     sideSvg.select('.pointer-1').style("stroke-dashoffset", lineLengthDict[1]);
   }
   if (a == 2 && CurrentLine != a) {//右下角呈现
-    // allowanceProfit(20, 2);
+    valueAddedProfit(5,1);
     // distribE();
     CurrentLine = a;
   } else if (a != 2){//右下角消失
-    // d3.select(".allowanceProfit").remove();
-    console.log('da');
+    d3.select(".valueAddedProfit").style("opacity", 1)
+    .transition().duration(400).style("opacity", 0).remove();
     sideSvg.select('.pointer-2').style("stroke-dashoffset", lineLengthDict[2]);
   }
 

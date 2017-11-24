@@ -62,12 +62,12 @@ const distribS = (m) => {
   // var xz = d3.range(m),
   // yz = d3.range(n).map(() => bumps(m)),
   yMax = 10;// d3.max(yz, n => d3.max(n));
-  const r = 300;
+  const r = H/3 + 40;
   const c = [1.1, 0.72, 2.05, 1.35, 2.4,1.3, 1.3, 2.5]
 
   const arc = d3.arc()
-    .innerRadius(300)
-    .outerRadius((n,i) => 300 + n * 30)
+    .innerRadius(r)
+    .outerRadius((n,i) => r + n * 30)
     .startAngle((n,i) => Math.PI / 4 * i)
     .endAngle((n,i) => Math.PI / 4 * (i+0.1))
   const node = svg.select('#circle');
