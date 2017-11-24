@@ -8,15 +8,15 @@
 <script src="circleBorder.js"></script>
 <script src="svgCircle.js"></script>
 <script src="particleBackground.js"></script>
-<script src="loading.js"></script>
+<script src="mousemove.js"></script>
 <style>
 </style>
 </head>
 <body>
 
-  <canvas id="circleCanvas" width="950" height="950"></canvas>
+  <canvas id="circleCanvas"></canvas>
   <canvas id="canvasParticle"></canvas>
-    <svg class="electric-loader" viewBox="0 0 100 100">
+    <svg class="electric-loader">
       <g></g>
     </svg>
     <svg id="circleBlue"></svg>
@@ -82,7 +82,7 @@ d3.selectAll('.heatmap a').on('mouseover', function(e){
 <script src="centerDistribution.js"></script>
 <script>
 const centerCircle = () => {
-  const r = 300
+  const r = H/3 - 40
   svg.append("g").attr("id", "circle").attr("transform", `translate(${W * 0.5},${H * 0.5})`);
   const node = svg.select('#circle')
   node.append("circle").attr("cx", 0).attr("cy", 0).attr("stroke", PrimaryColor).attr("r", r).attr("stroke-width", 2).attr("fill", 'transparent')
@@ -110,11 +110,9 @@ const allowanceProfit = (m , n) => {
     .domain(xz)
     .rangeRound([0, width])
     .padding(0.08);
-
   var y = d3.scaleLinear()
     .domain([0, y1Max])
     .range([height, 0]);
-
   var color = d3.scaleOrdinal()
     .domain(d3.range(n))
     .range(d3.schemeCategory20c);
@@ -130,7 +128,6 @@ const allowanceProfit = (m , n) => {
     .data(y01z)
     .enter().append("g")
     .attr("fill", function(d, i) { return color(i); });
-
   var rect = series.selectAll("rect")
     .data(function(d) { return d; })
     .enter().append("rect")
@@ -138,30 +135,25 @@ const allowanceProfit = (m , n) => {
     .attr("y", height)
     .attr("width", x.bandwidth())
     .attr("height", 0);
-
   rect.transition()
     .duration(500)
     .delay(function(d, i) { return i * 10; })
     .attr("y", function(d) { return y(d[1]); })
     .attr("height", function(d) { return y(d[0]) - y(d[1]); })
 }
-
 const distribE = (m) => {
   // var xz = d3.range(m),
   // yz = d3.range(n).map(() => bumps(m)),
   yMax = 10;// d3.max(yz, n => d3.max(n));
-  const r = 300;
+  const r = H/3 + 40;
   const c = [1.1, 0.72, 2.05, 1.35, 2.4]
-
   const arc = d3.arc()
     .innerRadius((n,i) => (r + 10 * i + 5))
     .outerRadius((n,i) => (r + 10 * i + 7))
     .startAngle(0)
     .endAngle(n => Math.PI / 2 * n)
   const node = svg.select('#circle');
-
   const nodePath = node.selectAll('path').data(c).enter().append("path").attr('fill', PrimaryColor)
-
   const tweenArc = (b) => {
     return function(a, i) {
       var d = b.call(this, a, i);
@@ -183,6 +175,7 @@ const pubOpMonitor = (m) => {
   var w = W * 0.25;
   var h = H * 0.15;
   var data = [1.3, 2.3, -1.5, -1.7, 1.5, 2.3, 1.9];
+  var data0 = [0, 0, 0, 0, 0, 0, 0];
     yMax = d3.max(data);
   const dist = sideSvg.append("g").attr("transform", `translate(50,${H*0.7})`).attr("id", "pubop")
   const x = d3.scaleLinear().domain([0, data.length-1]).range([0, w])
@@ -203,24 +196,31 @@ const pubOpMonitor = (m) => {
     .attr("y", 20)
     .attr("x", w)
     .text("1.1");
-
   /*g.attr("text-anchor", "end")
     .append('text')
     .attr("y", 20)
     .attr("x", 0)
     .text("1.9");*/
-  dist.append("path")
-    .attr("d", area(data))
+  var darea = dist.append("path")
+    .attr("d", area(data0))
     .attr("fill", PrimaryColor)
-    .attr('opacity', 0.1)
-  dist.append("path")
-    .attr("d", line(data))
+    .attr('opacity', 0.1);
+  var dline = dist.append("path")
+    .attr("d", line(data0))
     .attr("stroke", PrimaryColor)
     .attr("fill", 'none')
-    .attr("stroke-width", 2)
+    .attr("stroke-width", 2);
 
+    darea.transition()
+    .duration(500)
+    .delay(function(d, i) { return i * 10; })
+    .attr("d", area(data));
+
+    dline.transition()
+    .duration(500)
+    .delay(function(d, i) { return i * 10; })
+    .attr("d", line(data));
 }
-
 //沉没利润
 const valueAddedProfit = (m , n) => {
   var width = W*0.25;
@@ -234,11 +234,9 @@ const valueAddedProfit = (m , n) => {
     .domain(xz)
     .rangeRound([0, height-50])
     .padding(0.08);
-
   var y = d3.scaleLinear()
     .domain([0, y1Max])
     .range([height, 0]);
-
   var color = d3.scaleOrdinal()
     .domain(d3.range(n))
     .range(d3.schemeCategory20c);
@@ -257,7 +255,6 @@ const valueAddedProfit = (m , n) => {
     .attr("y", 20)
     .attr("x", width)
     .text("27.4%");
-
   var series = panel.append("g").attr("class", "chart").selectAll("g")
     .data(y01z)
     .enter().append("g")
@@ -267,23 +264,27 @@ const valueAddedProfit = (m , n) => {
     .enter().append("rect")
     .attr("y", (d, i) => x(i))
     .attr("x", 20)
-    .attr("width",  d=>(y(d[0]) - y(d[1])))
+    .attr("width",  0)
     .attr("height", x.bandwidth());
+    rect2.transition()
+    .duration(500)
+    .delay(function(d, i) { return i * 10; })
+    .attr("width",  d=>(y(d[0]) - y(d[1])))
 }
-
-
 const price = 20.6, i = 0.05;
 centerDistribution(price, i);//中间的分布图
 centerCircle();//中间的圆圈
-/*
+
 allowanceProfit(20, 2)//补贴发放和使用趋势
 pubOpMonitor(20,2);//舆情监控的趋势
 valueAddedProfit(5,1)//
-*/
-// distribE(5);//中间描述补贴的分布环线
+//distribE(5);//中间描述补贴的分布环线
 startCircleBorder();
 startSvgCircle();
 startParticleBackGround();
+setTimeout(() => {
+  startmousemove();
+}, 5000);
 </script>
-<script src="mousemove.js"></script>
+
 </html>

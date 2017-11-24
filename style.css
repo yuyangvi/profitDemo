@@ -68,12 +68,17 @@ body{
 #sideSvg{position: absolute;left: 0;top:0;}
 
 #circleCanvas{
+    display:block;
     position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
     margin: auto;
+    animation: jumpcircleCanvas 4s ease-out
+}
+#circleBlue {
+  animation: jumpcircleBlue 4s ease-out
 }
 
 #canvasParticle{
@@ -92,10 +97,11 @@ body{
   position: absolute;
   top: 0; right: 0; bottom: 0; left: 0;
   margin: auto;
-  width: 80%;
+  /* width: 80%;
   width: 80vw;
   height: auto;
-  max-width: 600px;
+  max-width: 600px; */
+  animation: jumpelectric 4s ease-out
 }
 .pointer{
   stroke: #1f97ed; 
@@ -107,9 +113,9 @@ body{
 .electric-loader path { 
   fill: none;
   stroke: #1f97ed; 
-  stroke-width: 0.2; 
+  stroke-width: 1.2; 
   
-  transform-origin: 50% 50%;
+  /* transform-origin: 50% 50%; */
   animation: 
     stroke-anim 2s steps(40) infinite, 
     stroke-color 0.6s steps(10)  alternate infinite,
@@ -140,5 +146,22 @@ body{
     100% {-webkit-transform: scale(1)}
 }
 
+@keyframes jumpcircleCanvas {
+  0% {transform: rotateY(-45deg) rotateX(65deg) translateZ(550px) scale(0.2,0.3)}
+  50% {transform: rotateY(-45deg) rotateX(65deg) translateZ(70px) scale(1,1)}
+  100% {transform: rotateY(0deg) rotateX(0deg) translateZ(0px) scale(1,1)}
+  /* 100% {transform: rotateY(360deg) rotateX(0deg) translateZ(0px) scale(1,1)} */
+}
 
-
+@keyframes jumpcircleBlue {
+  0% {transform: rotateY(-45deg) rotateX(65deg) translateZ(-650px) scale(0.2,0.3)}
+  50% {transform: rotateY(-45deg) rotateX(65deg) translateZ(100px) scale(1,1)}
+  100% {transform: rotateY(0deg) rotateX(0deg) translateZ(0px) scale(1,1)}
+  /* 100% {transform: rotateY(0deg) rotateX(360deg) translateZ(0px) scale(1,1)} */
+}
+@keyframes jumpelectric {
+  0% {transform: rotateY(-45deg) rotateX(65deg) translateZ(750px) scale(0.2,0.3)}
+  50% {transform: rotateY(-45deg) rotateX(65deg) translateZ(130px) scale(1,1)}
+  100% {transform: rotateY(0deg) rotateX(0deg) translateZ(0px) scale(1,1)}
+  /* 100% {transform: rotateY(360deg) rotateX(360deg) translateZ(0px) scale(1,1)} */
+}

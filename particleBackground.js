@@ -25,8 +25,8 @@ function startParticleBackGround() {
     const Particle = function () {
             this.x = canvasParticle.width * Math.random();
             this.y = canvasParticle.height * Math.random();
-            this.vx = 0.2 * Math.random();
-            this.vy = 0.2 * Math.random();
+            this.vx = 0.3 * Math.random();
+            this.vy = 0.3 * Math.random();
             this.Color = GetColor();
     }
     
