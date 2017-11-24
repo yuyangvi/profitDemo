@@ -32,7 +32,7 @@ body{
 #circle path:hover{transform: scale(1, 1.1);}
 .allowanceProfit text{font-size: 20px;font-size: WD_tech_Plain;}
 .allowanceProfit{transform: translate(50px,50px);}
-.allowanceProfitChart{transform: translate(0,50px);}
+.chart{transform: translate(0,50px);}
 .pubOpMonitor {
   transform: translate(50px, 450px);
 }

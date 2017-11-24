@@ -158,18 +158,34 @@ const distribE = (m) => {
 }
 const pubOpMonitor = (m) => {
   var w = W * 0.25;
-  var h = H * 0.25;
+  var h = H * 0.15;
   var data = [1.3, 2.3, -1.5, -1.7, 1.5, 2.3, 1.9];
     yMax = d3.max(data);
-  sideSvg.append("g").attr("transform", `translate(50,${H/2-h/2})`).attr("id", "pubop")
-  const x = d3.scaleLinear().domain([0, data.length]).range([0, w])
-  const y = d3.scaleLinear().domain([0, 5]).rangeRound([h, 0])
+  const dist = sideSvg.append("g").attr("transform", `translate(50,${H*0.7})`).attr("id", "pubop")
+  const x = d3.scaleLinear().domain([0, data.length-1]).range([0, w])
+  const y = d3.scaleLinear().domain([0, 3]).rangeRound([h, 0])
   const area = d3.area()
       .x((d,i) => x(i))
       .y0(h)
       .y1(d => y(d))
   const line = area.lineY1()
-  const dist = sideSvg.select('#pubop')
+  dist.append("g").attr("text-anchor", "start")
+    .append('text')
+    .attr("y", 20)
+    .attr("x", 0)
+    .text("Public Opinion Monitor");
+  dist.append("g").attr("text-anchor", "end")
+    .attr('class', 'h1')
+    .append('text')
+    .attr("y", 20)
+    .attr("x", w)
+    .text("1.1");
+
+  /*g.attr("text-anchor", "end")
+    .append('text')
+    .attr("y", 20)
+    .attr("x", 0)
+    .text("1.9");*/
   dist.append("path")
     .attr("d", area(data))
     .attr("fill", PrimaryColor)
@@ -179,17 +195,71 @@ const pubOpMonitor = (m) => {
     .attr("stroke", PrimaryColor)
     .attr("fill", 'none')
     .attr("stroke-width", 2)
+
 }
+
+//沉没利润
+const valueAddedProfit = (m , n) => {
+  var width = W*0.25;
+  var height = H * 0.25;
+  var xz = d3.range(m),
+    yz = d3.range(n).map(() => bumps(m)),
+    y01z = d3.stack().keys(d3.range(n))(d3.transpose(yz)),
+    yMax = d3.max(yz, n => d3.max(n)),
+    y1Max = d3.max(y01z, y => d3.max(y, d => d[1]));
+  var x = d3.scaleBand()
+    .domain(xz)
+    .rangeRound([0, height-50])
+    .padding(0.08);
+
+  var y = d3.scaleLinear()
+    .domain([0, y1Max])
+    .range([height, 0]);
+
+  var color = d3.scaleOrdinal()
+    .domain(d3.range(n))
+    .range(d3.schemeCategory20c);
+  y.domain([0, y1Max]);
+  
+  const panel = sideSvg.append("g").attr("class", "valueAddedProfit").attr("transform", `translate(${W*0.75},${H*0.7})`);
+  panel.append("g")
+    .attr("text-anchor", "start")
+    .append('text')
+    .attr("y", 20)
+    .attr("x", 0)
+    .text("Value-added Profit");
+  panel.append("g")
+    .attr("text-anchor", "end")
+    .append('text')
+    .attr("y", 20)
+    .attr("x", width)
+    .text("27.4%");
+
+  var series = panel.append("g").attr("class", "chart").selectAll("g")
+    .data(y01z)
+    .enter().append("g")
+    .attr("fill", function(d, i) { return color(i); });
+    console.log(series);
+  var rect2 = series.selectAll("rect")
+    .data(function(d) { return d; })
+    .enter().append("rect")
+    .attr("y", (d, i) => x(i))
+    .attr("x", 20)
+    .attr("width",  d=>(y(d[0]) - y(d[1])))
+    .attr("height", x.bandwidth());
+}
+
 
 const price = 20.6, i = 0.05;
 
 centerDistribution(price, i);//中间的分布图
 centerCircle();//中间的圆圈
-//allowanceProfit(20, 2)//补贴发放和使用趋势
-//pubOpMonitor(20,2);//舆情监控的趋势
-distribS(5);//中间描述补贴的分布环线
+allowanceProfit(20, 2)//补贴发放和使用趋势
+pubOpMonitor(20,2);//舆情监控的趋势
+valueAddedProfit(5,1)//
+// distribE(5);//中间描述补贴的分布环线
 </script>
-  <!--script src="circleBorder.js"></script>
+  <script src="circleBorder.js"></script>
   <script src="svgCircle.js"></script>
   <script src="particleBackground.js"></script>
   <script>
@@ -218,5 +288,5 @@ distribS(5);//中间描述补贴的分布环线
 
       canvas4.style.transform = 'translate(' + rotateY*3 + 'px, ' + rotateX*3 + 'px)';
     }, false);
-  </script-->
+  </script>
 </html>
