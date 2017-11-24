@@ -1,10 +1,7 @@
-function das () {
-  alert(52)
-}
 const centerDistribution = (price, i) => {
   const w = W / 6
   const h = W * 0.1
-  const data = d3.range(-3, 3, 0.1).map(n => [Math.pow(price, 1 + i * n), 1 - cdf(n)])
+  const data = d3.range(-3, 3, 0.1).map(n => [Math.pow(price, 1 + sigma * n), 1 - cdf(n)])
   //
   data.unshift([0, 1])
   svg.append("g").attr("transform", `translate(${w * 2.5},${H/2-h/2})`).attr("id", "dist")
@@ -22,7 +19,6 @@ const centerDistribution = (price, i) => {
     .attr("d", area(data))
     .attr("fill", PrimaryColor)
     .attr('opacity', 0.1)
-    .on('click',()=>console.log('fr'))
   dist.append("path")
     .attr("d", line(data))
     .attr("stroke", PrimaryColor)
@@ -41,7 +37,7 @@ const centerDistribution = (price, i) => {
       .ticks(1)
     );
   //画虚线
-  const hintData = [[0,0.5],[20.03,0.5],[20.03,0]];
+  const hintData = [[0,0.55],[20.03,0.55],[20.03,0]];
   dist.append("path").attr("stroke-dasharray", 4).attr('d', line(hintData))
       .attr("stroke", PrimaryColor)
       .attr("fill", 'none')
@@ -53,7 +49,7 @@ const centerDistribution = (price, i) => {
   g.append('text').attr("x", w*0.25).text("Pmax")
   g.append('text').attr("x", w*0.25).attr("y", 30).attr("class", "h1").text("20.03");
   g.append('text').attr("x", w*0.75).text("σ")
-  g.append('text').attr("x", w*0.75).attr("y", 30).attr("class", "h1").text("0.3");
+  g.append('text').attr("x", w*0.75).attr("y", 30).attr("class", "h1").text(sigma);
   //g.append('text').attr("class", "h1").text("mu: 0.3").attr("text-anchor", "middle");
 }
 

@@ -129,6 +129,7 @@ body{
   position: absolute;
   z-index: 6;
   border-radius: 5px;
+  animation: breath 1s ease-in-out infinite;
 }
 .flink{ left: 48%; top: 46%;}
 .rlink{ left: 48%; top: 57%;}
@@ -142,7 +143,7 @@ body{
 }
 @keyframes breath {
     0%   {-webkit-transform: scale(1)}
-    50% {-webkit-transform: scale(1.1)}
+    50% {-webkit-transform: scale(1.3);opacity:0.8;}
     100% {-webkit-transform: scale(1)}
 }
 
