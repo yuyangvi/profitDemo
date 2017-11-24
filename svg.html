@@ -70,14 +70,33 @@ let CurrentLine = -1;
 d3.selectAll('.heatmap a').on('mouseover', function(e){
   const a = this.href.slice(-1);
   sideSvg.select('.pointer-'+a).style("stroke-dashoffset", 0);
+  console.log(a, CurrentLine);
   if (a == 0 && CurrentLine != a) {//左上角呈现
     allowanceProfit(20, 2);
     distribE();
     CurrentLine = a;
-  } else if (a !=0 && CurrentLine == 0){//左上角消失
+  } else if (a !=0){//左上角消失
     d3.select(".allowanceProfit").remove();
-    sideSvg.select('.pointer-'+0).style("stroke-dashoffset", lineLengthDict[0]);
+    sideSvg.select('.pointer-0').style("stroke-dashoffset", lineLengthDict[0]);
   }
+  if (a == 1 && CurrentLine != a) {//左下角呈现
+    // allowanceProfit(20, 2);
+    // distribE();
+    CurrentLine = a;
+  } else if (a != 1){//左下角消失
+    // d3.select(".allowanceProfit").remove();
+    sideSvg.select('.pointer-1').style("stroke-dashoffset", lineLengthDict[1]);
+  }
+  if (a == 2 && CurrentLine != a) {//右下角呈现
+    // allowanceProfit(20, 2);
+    // distribE();
+    CurrentLine = a;
+  } else if (a != 2){//右下角消失
+    // d3.select(".allowanceProfit").remove();
+    console.log('da');
+    sideSvg.select('.pointer-2').style("stroke-dashoffset", lineLengthDict[2]);
+  }
+
 });
 </script>
 <script src="statistic.js"></script>
