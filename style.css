@@ -107,6 +107,7 @@ body{
   stroke: #1f97ed; 
   stroke-width: 2;
   fill: none;
+  transition: stroke-dashoffset 1s;
 }
 
 .electric-loader path { 
