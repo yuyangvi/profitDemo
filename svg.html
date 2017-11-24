@@ -25,7 +25,7 @@
 
     <div class="params">
       <p>
-        <label for="σ">σ</label><input type="range" name="points" min="0" max="1" />
+        <label for="σ">σ</label><input type="range" name="sigma" min="0" max="50" id="sigma-input" />
       </p>
       <p>
         <label for="cost">cost</label><input type="range" name="points" min="0" max="100" />
@@ -61,7 +61,7 @@ const lineLengthDict = [
   W * 0.08 + getLineLength(W * 0.15, H * 0.33),
   W * 0.08 + getLineLength(W * 0.16, H * 0.19),
   W * 0.13 + getLineLength(W * 0.07, H * 0.19)
-]
+];
 sideSvg.selectAll('.pointer').data(pointerData).enter().append('path')
   .style('stroke-dasharray', (d, i) => lineLengthDict[i])
   .style('stroke-dashoffset', (d, i) => lineLengthDict[i])
@@ -70,7 +70,6 @@ let CurrentLine = -1;
 d3.selectAll('.heatmap a').on('mouseover', function(e){
   const a = this.href.slice(-1);
   sideSvg.select('.pointer-'+a).style("stroke-dashoffset", 0);
-  console.log(a, CurrentLine);
   if (a == 0 && CurrentLine != a) {//左上角呈现
     allowanceProfit(20, 2);
     setTimeout(() => {
@@ -103,6 +102,7 @@ d3.selectAll('.heatmap a').on('mouseover', function(e){
   if (a == 2 && CurrentLine != a) {//右下角呈现
     valueAddedProfit(5,1);
     // distribE();
+    valueAddedProfit(5,1)//*/
     CurrentLine = a;
   } else if (a != 2){//右下角消失
     d3.select(".valueAddedProfit").style("opacity", 1)
@@ -305,8 +305,8 @@ const valueAddedProfit = (m , n) => {
     .delay(function(d, i) { return i * 10; })
     .attr("width",  d=>(y(d[0]) - y(d[1])))
 }
-const price = 20.6, i = 0.05;
-centerDistribution(price, i);//中间的分布图
+let price = 100, sigma = 0.01;
+centerDistribution(price, sigma, 10);//中间的分布图
 centerCircle();//中间的圆圈
 /*
 allowanceProfit(20, 2)//补贴发放和使用趋势
@@ -319,6 +319,11 @@ startParticleBackGround();
 setTimeout(() => {
   startmousemove();
 }, 5000);
+document.getElementById('sigma-input').addEventListener('change', (e) => {
+  const sig = e.target.value/100;
+  d3.select('#dist').remove();
+  centerDistribution(price, sig, 40.2);//中间的分布图
+});
 </script>
 
 </html>
