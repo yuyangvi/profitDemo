@@ -25,7 +25,7 @@
 
     <div class="params">
       <p>
-        <label for="σ">σ</label><input type="range" name="points" min="0" max="1" />
+        <label for="σ">σ</label><input type="range" name="sigma" min="0" max="50" id="sigma-input" />
       </p>
       <p>
         <label for="cost">cost</label><input type="range" name="points" min="0" max="100" />
@@ -72,31 +72,41 @@ d3.selectAll('.heatmap a').on('mouseover', function(e){
   sideSvg.select('.pointer-'+a).style("stroke-dashoffset", 0);
   if (a == 0 && CurrentLine != a) {//左上角呈现
     allowanceProfit(20, 2);
-    distribE();
+    setTimeout(() => {
+      distribE();
+    }, 700);
     CurrentLine = a;
   } else if (a !=0){//左上角消失
-    d3.select(".allowanceProfit").remove();
-    d3.selectAll("#circle path").remove();
+    // d3.select(".allowanceProfitChart").selectAll("rect").transition()
+    // .duration(500)
+    // .attr("height", 0);
+    d3.select(".allowanceProfit").style("opacity", 1)
+    .transition().duration(400).style("opacity", 0).remove();
+    d3.select('#circle').selectAll('path').style("opacity", 1).transition()
+    .duration(400).style("opacity", 0).remove();
     sideSvg.select('.pointer-0').style("stroke-dashoffset", lineLengthDict[0]);
   }
   if (a == 1 && CurrentLine != a) {//左下角呈现
-    // allowanceProfit(20, 2);
-    // distribE();
-    pubOpMonitor(20,2);//舆情监控的趋势
-
+    pubOpMonitor(20,2);
+    setTimeout(() => {
+      distribS()
+    }, 700);
     CurrentLine = a;
   } else if (a != 1){//左下角消失
-    // d3.select(".allowanceProfit").remove();
+    d3.select("#pubop").style("opacity", 1)
+    .transition().duration(400).style("opacity", 0).remove();
+    d3.select('#circle').selectAll('path').style("opacity", 1).transition()
+    .duration(400).style("opacity", 0).remove();
     sideSvg.select('.pointer-1').style("stroke-dashoffset", lineLengthDict[1]);
   }
   if (a == 2 && CurrentLine != a) {//右下角呈现
-    // allowanceProfit(20, 2);
+    valueAddedProfit(5,1);
     // distribE();
     valueAddedProfit(5,1)//*/
     CurrentLine = a;
   } else if (a != 2){//右下角消失
-    // d3.select(".allowanceProfit").remove();
-    console.log('da');
+    d3.select(".valueAddedProfit").style("opacity", 1)
+    .transition().duration(400).style("opacity", 0).remove();
     sideSvg.select('.pointer-2').style("stroke-dashoffset", lineLengthDict[2]);
   }
 
@@ -295,8 +305,8 @@ const valueAddedProfit = (m , n) => {
     .delay(function(d, i) { return i * 10; })
     .attr("width",  d=>(y(d[0]) - y(d[1])))
 }
-const price = 20.6, sigma = 0.05;
-centerDistribution(price, sigma);//中间的分布图
+let price = 100, sigma = 0.01;
+centerDistribution(price, sigma, 10);//中间的分布图
 centerCircle();//中间的圆圈
 /*
 allowanceProfit(20, 2)//补贴发放和使用趋势
@@ -309,6 +319,11 @@ startParticleBackGround();
 setTimeout(() => {
   startmousemove();
 }, 5000);
+document.getElementById('sigma-input').addEventListener('change', (e) => {
+  const sig = e.target.value/100;
+  d3.select('#dist').remove();
+  centerDistribution(price, sig, 40.2);//中间的分布图
+});
 </script>
 
 </html>
