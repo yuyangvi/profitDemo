@@ -136,7 +136,7 @@ body{
 .jumpout {
   animation: jumpa 5s ease-out
 }
-.flink{ left: 48%; top: 46%;}
+.flink{ left: 48%; top: 42%;}
 .rlink{ left: 48%; top: 57%;}
 .plink{ left: 53%; top: 57%;}
 
